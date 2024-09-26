@@ -42,8 +42,10 @@ public class ReproExampleTest {
 
             runCommands(dataSource, "DOCKER");
 
-            dataSource.setUrl(System.getenv("POSTGRES_NATIVE_URL"));
-            dataSource.setUsername(System.getenv("POSTGRES_NATIVE_USERNAME"));
+            String url = System.getenv("POSTGRES_NATIVE_URL");
+            String username = System.getenv("POSTGRES_NATIVE_USERNAME");
+            dataSource.setUrl(url == null ? "jdbc:postgresql://localhost:5432/test" : url);
+            dataSource.setUsername(username == null ? "test" : username);
             dataSource.setPassword("");
 
             runCommands(dataSource, "NATIVE");

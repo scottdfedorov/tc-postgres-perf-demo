@@ -3,8 +3,16 @@ package org.testcontainers.repro;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.utility.DockerImageName;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.testcontainers.containers.PostgreSQLContainer;
+
+import javax.sql.DataSource;
+import java.time.Instant;
+import java.util.Map;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
 
 public class ReproExampleTest {
 
@@ -21,13 +29,41 @@ public class ReproExampleTest {
     @Test
     public void demonstration() {
         try (
-            // customize the creation of a container as required
-            GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse("redis:6.0.5"))
-                    .withExposedPorts(6379)
+                PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:15.8-alpine")
         ) {
+            container.withInitScript("init.sql");
             container.start();
 
-            // ...
+            DriverManagerDataSource dataSource = new DriverManagerDataSource();
+            dataSource.setDriverClassName("org.postgresql.Driver");
+            dataSource.setUrl(container.getJdbcUrl());
+            dataSource.setUsername(container.getUsername());
+            dataSource.setPassword(container.getPassword());
+
+            runCommands(dataSource, "DOCKER");
+
+            dataSource.setUrl(System.getenv("POSTGRES_NATIVE_URL"));
+            dataSource.setUsername(System.getenv("POSTGRES_NATIVE_USERNAME"));
+            dataSource.setPassword("");
+
+            runCommands(dataSource, "NATIVE");
+
+
         }
+    }
+
+    private void runCommands(DataSource dataSource, String type) {
+        Instant start = Instant.now();
+        LOG.info("STARTING RUN AGAINST {}", type);
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(dataSource);
+        for (int i = 0; i < 10_000; i++) {
+            String uuid = UUID.randomUUID().toString();
+            template.update("INSERT INTO demo(uuid) VALUES (:id)", Map.of("id", uuid));
+
+            String returned = template.queryForObject("SELECT uuid FROM demo where uuid = :uuid", Map.of("uuid", uuid), String.class);
+            assertEquals(returned, uuid);
+        }
+        Long msDiff = Instant.now().minusMillis(start.toEpochMilli()).toEpochMilli();
+        LOG.info("FINISHED RUN AGAINST {}, TOOK {} MS", type, msDiff);
     }
 }

@@ -1,7 +1,8 @@
 # testcontainers-java-repro
 
-A template repository intended to help create isolated repro examples for [testcontainers-java](https://github.com/testcontainers/testcontainers-java) issues.
+This repo is for illustrating the performance impact of running testcontainers/docker postgres vs native installed postgres
+on aarch64 MacOS machines. 
 
-To use this as a template, click the `Use this template` button above.
 
-Code to reproduce the issue should be located in [ReproExample](src/test/java/org/testcontainers/repro/ReproExample.java).
+To setup native, you need to install a postgres database and create the environment variables. I have created a helper 
+script to do that with brew on macos in the resources folder. 

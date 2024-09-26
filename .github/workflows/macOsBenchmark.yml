@@ -1,0 +1,14 @@
+name: Run Script on MacOS ARM
+
+on: [ push ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Make the script files executable
+        run: chmod +x ./src/test/resources/setupPostgresNative.sh
+      - name: Run benchmark script
+        run: ./src/test/resources/setupPostgresNative.sh

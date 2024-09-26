@@ -14,7 +14,7 @@ Full repro steps, if the script doesn't work or you want to handle manually:
 * Run the command `./mvnw test`
 
 Representative sample:
-```sql
+```
 14:06:09.833 [main] INFO  org.testcontainers.repro.ReproExampleTest - STARTING RUN AGAINST DOCKER
 14:07:56.170 [main] INFO  org.testcontainers.repro.ReproExampleTest - FINISHED RUN AGAINST DOCKER, TOOK 106336 MS
 14:07:56.171 [main] INFO  org.testcontainers.repro.ReproExampleTest - STARTING RUN AGAINST NATIVE

@@ -4,5 +4,5 @@ This repo is for illustrating the performance impact of running testcontainers/d
 on aarch64 MacOS machines. 
 
 
-To setup native, you need to install a postgres database and create the environment variables. I have created a helper 
-script to do that with brew on macos in the resources folder. 
+You can try running this executable with `./src/test/resources/setupPostgresNative.sh` from the root of the project.
+(Note: The script needs to be made executable. `chmod 755 ./src/test/resources/setupPostgresNative.sh`)

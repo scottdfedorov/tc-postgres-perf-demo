@@ -10,5 +10,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Make the script files executable
         run: chmod +x ./src/test/resources/setupPostgresNative.sh
+      - name: Install docker
+        run: brew install docker
       - name: Run benchmark script
         run: ./src/test/resources/setupPostgresNative.sh
